@@ -1,27 +1,27 @@
 import pygame
 import time
 import random
-
+import sys
 pygame.init()
 
 WIDTH = 480
-HEIGHT = 600 # 120 na nagłowek
+HEIGHT = 600  # 120 na nagłowek
 # 12 czesci
-#12 * 12 = 144 gemów
+# 12 * 12 = 144 gemów
 
 x_change = 40
 y_change = 40
 
-black = (0,0,0)
-white = (255,255,255)
-red = (255,0,0)
+black = (0, 0, 0)
+white = (255, 255, 255)
+red = (255, 0, 0)
 
-gameDisplay = pygame.display.set_mode((WIDTH,HEIGHT))
+gameDisplay = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
 clock = pygame.time.Clock()
 
-carImg = pygame.image.load('cursor.png')
-carImg = pygame.transform.scale(carImg, (40, 40))
+cursorImg = pygame.image.load('cursor.png')
+cursorImg = pygame.transform.scale(cursorImg, (40, 40))
 
 GreenGem = pygame.image.load('GreenGem.png')
 GreenGem = pygame.transform.scale(GreenGem, (40, 40))
@@ -37,23 +37,25 @@ BlueGem = pygame.transform.scale(BlueGem, (40, 40))
 
 
 gems = []
-for y in range(1,13):
-    for x in range(1,13):
+for y in range(1, 13):
+    for x in range(1, 13):
         gems.append("gem" + str(x) + "_" + str(y))
 
 gPion = []
 for i in range(12):
-    for j in range(i,144,12):
+    for j in range(i, 144, 12):
         gPion.append(j)
 
 points = 0
 
+
 class Gem:
-    def __init__(self,color,img,x,y):
+    def __init__(self, color, img, x, y):
         self.color = color
         self.img = img
-        self.x = x 
+        self.x = x
         self.y = y
+
 
 def delay():
     global points
@@ -63,14 +65,16 @@ def delay():
     score(points)
     pygame.display.update()
 
+
 def score(points):
-    font = pygame.font.SysFont(None, 40)
+    font = pygame.font.SysFont("Sans", 40)
     text = font.render("Score: " + str(points), True, white)
-    gameDisplay.blit(text,((WIDTH/2-50),80))
+    gameDisplay.blit(text, ((WIDTH/2-50), 80))
     pygame.display.update()
 
+
 def randomizeGems():
-    rand = random.randint(0,3)
+    rand = random.randint(0, 3)
     if rand == 0:
         color = 'g'
         img = GreenGem
@@ -79,19 +83,20 @@ def randomizeGems():
         img = RedGem
     elif rand == 2:
         color = 'y'
-        img = YellowGem 
+        img = YellowGem
     elif rand == 3:
         color = 'b'
         img = BlueGem
-    return color,img
+    return color, img
+
 
 def fixGems():
     fix = True
     while fix:
         fix = False
 
-        #poziomo
-        for i in range(2,144):
+        # poziomo
+        for i in range(2, 144):
             fixCon = True
             while fixCon:
                 if gems[i].color == gems[i-1].color and gems[i].color == gems[i-2].color:
@@ -100,9 +105,9 @@ def fixGems():
                     gems[i-1].color, gems[i-1].img = randomizeGems()
                 else:
                     fixCon = False
-                    
-        #pionowo
-        for i in range(2,len(gPion)):
+
+        # pionowo
+        for i in range(2, len(gPion)):
             fixCon = True
             while fixCon:
                 if gems[gPion[i]].color == gems[gPion[i-1]].color and gems[gPion[i]].color == gems[gPion[i-2]].color:
@@ -112,26 +117,30 @@ def fixGems():
                 else:
                     fixCon = False
 
+
 def generateGems():
     i = 0
-    for y in range(120,HEIGHT,40):
-        for x in range(0,WIDTH,40):
+    for y in range(120, HEIGHT, 40):
+        for x in range(0, WIDTH, 40):
             color, img = randomizeGems()
-            gems[i] = Gem(color,img,x,y)
+            gems[i] = Gem(color, img, x, y)
             i += 1
     fixGems()
 
+
 def drawGems():
     for i in range(144):
-        gameDisplay.blit(gems[i].img,(gems[i].x,gems[i].y))
+        gameDisplay.blit(gems[i].img, (gems[i].x, gems[i].y))
+
 
 def chosingText():
-    font = pygame.font.SysFont(None, 25)
+    font = pygame.font.SysFont("Sans", 25)
     text = font.render("^", True, white)
-    gameDisplay.blit(text,(WIDTH/2-4,20))
+    gameDisplay.blit(text, (WIDTH/2-4, 20))
     text = font.render("<--v-->", True, white)
-    gameDisplay.blit(text,((WIDTH/2)-25,30))
+    gameDisplay.blit(text, ((WIDTH/2)-25, 30))
     pygame.display.update()
+
 
 def chosing(Cord):
     chosingText()
@@ -146,38 +155,47 @@ def chosing(Cord):
                 break
             if event.key == pygame.K_LEFT:
                 if Cord % 12 > 0:
-                    gems[Cord].color,gems[Cord-1].color =  gems[Cord-1].color,gems[Cord].color
-                    gems[Cord].img,gems[Cord-1].img =  gems[Cord-1].img,gems[Cord].img
+                    gems[Cord].color, gems[Cord -
+                                           1].color = gems[Cord-1].color, gems[Cord].color
+                    gems[Cord].img, gems[Cord -
+                                         1].img = gems[Cord-1].img, gems[Cord].img
                 break
             if event.key == pygame.K_RIGHT:
                 if Cord % 12 < 11:
-                    gems[Cord].color,gems[Cord+1].color =  gems[Cord+1].color,gems[Cord].color
-                    gems[Cord].img,gems[Cord+1].img =  gems[Cord+1].img,gems[Cord].img
+                    gems[Cord].color, gems[Cord +
+                                           1].color = gems[Cord+1].color, gems[Cord].color
+                    gems[Cord].img, gems[Cord +
+                                         1].img = gems[Cord+1].img, gems[Cord].img
                 break
             if event.key == pygame.K_UP:
                 if Cord > 11:
-                    gems[Cord].color,gems[Cord-12].color =  gems[Cord-12].color,gems[Cord].color
-                    gems[Cord].img,gems[Cord-12].img =  gems[Cord-12].img,gems[Cord].img
+                    gems[Cord].color, gems[Cord-12].color = gems[Cord -
+                                                                 12].color, gems[Cord].color
+                    gems[Cord].img, gems[Cord -
+                                         12].img = gems[Cord-12].img, gems[Cord].img
                 break
             if event.key == pygame.K_DOWN:
                 if Cord < 132:
-                    gems[Cord].color,gems[Cord+12].color =  gems[Cord+12].color,gems[Cord].color
-                    gems[Cord].img,gems[Cord+12].img =  gems[Cord+12].img,gems[Cord].img
+                    gems[Cord].color, gems[Cord+12].color = gems[Cord +
+                                                                 12].color, gems[Cord].color
+                    gems[Cord].img, gems[Cord +
+                                         12].img = gems[Cord+12].img, gems[Cord].img
                 break
 
+
 def fillGems():
-    
+
     isBlank = True
     while isBlank:
         isBlank = False
-        for i in range(143,11,-1):
+        for i in range(143, 11, -1):
             if gems[i].color == 'null' and gems[i-12].color != 'null':
                 isBlank = True
-                gems[i].color,gems[i-12].color =  gems[i-12].color,gems[i].color
-                gems[i].img,gems[i-12].img =  gems[i-12].img,gems[i].img
+                gems[i].color, gems[i-12].color = gems[i-12].color, gems[i].color
+                gems[i].img, gems[i-12].img = gems[i-12].img, gems[i].img
                 delay()
 
-        for i in range(11,-1,-1):
+        for i in range(11, -1, -1):
             if gems[i].color == 'null':
                 isBlank = True
                 color, img = randomizeGems()
@@ -185,20 +203,21 @@ def fillGems():
                 gems[i].img = img
                 delay()
 
+
 def checkGems():
-    global points 
-    #poziomo
+    global points
+    # poziomo
     matchGems = []
     for y in range(12):
-        for x in range(2,12):
+        for x in range(2, 12):
             cord = y*12 + x
             if gems[cord].color == gems[cord-1].color and gems[cord].color == gems[cord-2].color:
                 points += 100
                 matchGems.append(cord)
                 matchGems.append(cord-1)
                 matchGems.append(cord-2)
-                
-    for y in range(2,12):
+
+    for y in range(2, 12):
         for x in range(12):
             cord = y*12 + x
             if gems[cord].color == gems[cord-12].color and gems[cord].color == gems[cord-24].color:
@@ -208,15 +227,16 @@ def checkGems():
                 matchGems.append(cord-24)
 
     for match in matchGems:
-        gems[match].img = carImg
+        gems[match].img = cursorImg
         gems[match].color = 'null'
 
     if len(matchGems) > 0:
-        print("XD")
         fillGems()
-        
-def car(x,y):
-    gameDisplay.blit(carImg,(x,y))
+
+
+def car(x, y):
+    gameDisplay.blit(cursorImg, (x, y))
+
 
 def game_loop():
     global points
@@ -231,14 +251,14 @@ def game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     x += -x_change
                     if x_cursor > 0:
                         x_cursor -= 1
                 if event.key == pygame.K_RIGHT:
-                    x +=  x_change
+                    x += x_change
                     if x_cursor < 11:
                         x_cursor += 1
                 if event.key == pygame.K_UP:
@@ -249,11 +269,10 @@ def game_loop():
                     y += y_change
                     if y_cursor < 11:
                         y_cursor += 1
-                if event.key == pygame.K_RETURN: # enter
+                if event.key == pygame.K_RETURN:  # enter
                     chosing(y_cursor*12+x_cursor)
                 if event.key == pygame.K_r:
-                    main()               
-
+                    main()
         checkGems()
         if x > WIDTH - 40:
             x = WIDTH - 40
@@ -263,19 +282,19 @@ def game_loop():
             y = HEIGHT - 40
         if y < 120:
             y = 120
-        
         gameDisplay.fill(black)
-        car(x,y)
+        car(x, y)
         drawGems()
         score(points)
         pygame.display.update()
         clock.tick(15)
-        
+
+
 def main():
     generateGems()
     game_loop()
 
-main()
 
+main()
 pygame.quit()
-quit()
+sys.quit()
